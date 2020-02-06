@@ -6,25 +6,34 @@
 #include <memory>
 using namespace std;
 
-template <class List>
+template <class T>
 class SLL {
+	//<< overloader, Linera relationship O(n)
+	friend ostream& operator <<(ostream& out, const SLL<T>& rhs) {
+		SLLNode* curr;
+		while (curr = rhs.head, curr != 0, curr = curr->next) {
+			out << curr->data << " ";
+			curr = curr->next;
+		}
+		return out;
+	}
 
-	template <class Node>
+public:
 	class SLLNode {
 	public:
-		int data;
+		T data;
 		SLLNode* next;
-		//Node constructors
+		//Node constructors, liners O(n)
 		SLLNode() {
-			int data;
+			T data;
 			SLLNode* next;
 		}
-		SLLNode(int val, SLLNode* ptr = 0) {
-			int data = val;
+		SLLNode(T val, SLLNode* ptr = 0) {
+			data = val;
 			next = ptr;
 		}
-		//inserts value
-		void insert(int val) {
+		//inserts value into node
+		void insert(T val) {
 			SLLNode* curr;
 			SLLNode* p_curr;
 			curr = p_curr = head;
@@ -36,21 +45,15 @@ class SLL {
 			p_curr->next = nn;
 			nn->next = curr;
 		}
-
 	};
 
-private:
-	//node pointer to head and tail of the list
-	SLLNode* head;
-	SLLNode* tail;
 	//Implementations for Singly LinkedList Class		
-public:
 	//default constructor
 	SLL() {
-		head = 0;
-		tail = 0;
+		head;
+		tail;
 	}
-	//copy constructor
+	//copy constructor; BigO Linear O(n)
 	SLL(SLL* aList) {
 		if (aList->head == 0) {
 			head = tail = 0;
@@ -71,17 +74,15 @@ public:
 		}
 	}
 	//accesses first element
-	int front() {
+	T front() {
 		return head->data;
 	}
-
 	//accesses last element
-	int back() {
+	T back() {
 		return tail->data;
 	}
-
 	//removes front value
-	int pop_front() {
+	T pop_front() {
 		int i = head->data;
 		SLLNode* temp = head;
 		if (head == tail) {
@@ -93,10 +94,9 @@ public:
 		delete temp;
 		return i;
 	}
-
 	//removes back value
-	int pop_back() {
-		int i = tail->data;
+	T pop_back() {
+		T i = tail->data;
 		if (head == tail) {
 			delete head;
 			head = tail = 0;
@@ -111,17 +111,30 @@ public:
 		}
 		return i;
 	}
-
 	//inserts a value
-	void insert(int val) {
-		//make a node
-		SLLNode* nn = new SLLNode(val);
-		nn->head = val;
-		nn->tail = head;
-		head = nn;
+	//Linear O(n)
+	void insert(T val) {
+		//make a node ptr
+		SLLNode* curr = head;
+		SLLNode* insrt = new SLLNode(val);
+		//locates the node its inserting in behind of
+		if (insrt == NULL && insrt->data >= curr->data) {
+			insrt->next = curr;
+			curr = insrt;
+		}
+		else {
+			//locates node its inserting in front of 
+			curr = insrt;
+			while (curr->next != NULL && curr->next->data < insrt->data) {
+				curr = curr->next;
+			}
+			insrt->next = curr->next;
+			curr->next = insrt;
+		}
 	}
 
 	//determines if empty
+	//Linear O(n)
 	bool empty() {
 		SLLNode* temp = head;
 		if (temp != 0) {
@@ -133,6 +146,7 @@ public:
 	}
 
 	//returns the number of elements
+	//Linear O(n)
 	int size() {
 		//initialize counting integer
 		int ct = 0;
@@ -144,7 +158,8 @@ public:
 		return ct;
 	}
 
-	////reverse order of elements in list
+	//reverse order of elements in list
+	//Linear O(n)
 	SLL reverse() {
 		SLLNode* curr = head;
 		SLLNode* prev = NULL, * next = NULL;
@@ -158,9 +173,11 @@ public:
 	}
 
 	//merge with another ordered list
+	//O(n) this is still linear iteration however
+	//the output is double the size of n
 	SLL merge(SLL aList) {
 		SLL* result;
-		SLLNode* Aptr, Bptr;
+		SLLNode* Aptr, * Bptr;
 		SLL& rhs;
 		Aptr = head->next;
 		Bptr = rhs->head->next;
@@ -174,20 +191,19 @@ public:
 				Bptr->next = result;
 				Bptr->head = result->head;
 				//update surroundings
-				result->next = Bptr;
+				result->next->head = Bptr;
+
 
 			}
-			
+
 		}
 		return result;
 	}
-	friend ostream& operator<<(ostream& out, SLL& lst) {
-		SLLNode& curr = front;
-		while (curr != nullptr) {
-			out << lst.curr.head << " ";
-			curr = lst.curr.tail;
-		}
-	}
+
+private:
+	//node pointer to head and tail of the list
+	SLLNode* head;
+	SLLNode* tail;
 };
 #endif
 

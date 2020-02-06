@@ -26,7 +26,7 @@ int main() {
 	if (list1.empty() == true) {
 		cout << "Insert function is opoerational" << endl;
 	}
-	
+
 	//checks front() and back()
 	cout << list1.front() << endl;
 	cout << list1.back() << endl;
